@@ -2,12 +2,8 @@ import random
 
 
 position = (0,0)
-path = []
 
-start = (0,0)
-end = (8,8)
-
-def generate_maze(rows, cols, wall_prob = 0.3):
+"""def generate_maze(rows, cols, wall_prob = 0.3):
     maze = []
     
     for r in range(rows):
@@ -19,6 +15,47 @@ def generate_maze(rows, cols, wall_prob = 0.3):
                 row.append(1)
         maze.append(row)
     
+    return maze"""
+
+def create_empty_maze(rows, cols):
+    return [[1 for _ in range(cols)] for _ in range(rows)]
+
+def carve_maze(maze, row, col):
+    
+    directions = [
+        (2,0),   #up
+        (0,2),   #right
+        (0,-2),  #left
+        (-2,0),  #down
+        ]
+    
+    random.shuffle(directions)
+    
+    for dr, dc in directions:
+        new_row = row + dr
+        new_col = col + dc
+        
+        if 0 <= new_row < len(maze) and 0 <= new_col < len(maze[0]):
+            if maze[new_row][new_col] == 1:
+                maze[row + dr//2][col + dc//2] = 0
+                maze[new_row][new_col] = 0
+                
+                carve_maze(maze, new_row, new_col)
+                
+def generate_maze(rows, cols):
+    
+    if rows % 2 == 0:
+        rows += 1
+    if cols % 2 == 0:
+        cols += 1
+        
+    create_empty_maze(rows, cols)
+    maze = create_empty_maze(rows, cols)
+    
+    start_row, start_col = 0, 0
+    maze[start_row][start_col] = 0
+    
+    carve_maze(maze, start_row, start_col)
     return maze
 
 def print_maze(maze, start, end, path):
@@ -66,6 +103,7 @@ def valid_moves(maze, position):
     
 def solve(maze, position, end, visited, path):    
     if position == end:
+        path.append(position)
         return True
     
     visited.add(position)
@@ -80,7 +118,9 @@ def solve(maze, position, end, visited, path):
     return False
 
 
-maze = generate_maze(8,8)
-print_maze(maze, start, end, path)
+maze = generate_maze(39,49)
+start = (0,0)
+end = (len(maze)-1, len(maze[0])-1)
+path = []
 solve(maze, start, end, set(), path)
-print(path)
+print_maze(maze, start, end, path)
