@@ -1,21 +1,6 @@
 import random
+import time
 
-
-position = (0,0)
-
-"""def generate_maze(rows, cols, wall_prob = 0.3):
-    maze = []
-    
-    for r in range(rows):
-        row = []
-        for c in range(cols):
-            if random.random() > wall_prob:
-                row.append(0)
-            else:
-                row.append(1)
-        maze.append(row)
-    
-    return maze"""
 
 def create_empty_maze(rows, cols):
     return [[1 for _ in range(cols)] for _ in range(rows)]
@@ -59,6 +44,7 @@ def generate_maze(rows, cols):
     return maze
 
 def print_maze(maze, start, end, path):
+    print("\n" * 5)
     rows = len(maze)
     cols = len(maze[0])
     
@@ -108,17 +94,21 @@ def solve(maze, position, end, visited, path):
     
     visited.add(position)
     path.append(position)
+    
+    print_maze(maze, start, end, path)
+    time.sleep(0.1)
     for move in valid_moves(maze, position):
         if move not in visited:
             if solve(maze, move, end, visited, path):
                 return True
-            print_maze(maze, start, end, path)
             
     path.pop()
+    print_maze(maze, start, end, path)
+    time.sleep(0.1)
     return False
 
-
-maze = generate_maze(39,49)
+position = (0,0)
+maze = generate_maze(15,15)
 start = (0,0)
 end = (len(maze)-1, len(maze[0])-1)
 path = []
