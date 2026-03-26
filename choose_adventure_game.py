@@ -6,7 +6,7 @@ rooms = {"hall": {"description": "A long, dark hall.",
     "kitchen": {"description": "A kitchen with a strange smell.", 
                 "south": "hall",
                 'north': 'great hall',
-                'items': ["paper scrap"""],
+                'items': ["paper scrap"],
                 'dark': True
                 },
     "library": {"description": "Filled with dusty books. There is a treasure chest in the corner with a code lock.", 
@@ -15,20 +15,18 @@ rooms = {"hall": {"description": "A long, dark hall.",
                 'locked' : True,
                 'dark' : True
                 },
-    """great hall""": {"description": "A large throne room, tattered banners drape the walls.", 
+    "great hall": {"description": "A large throne room, tattered banners drape the walls.", 
                 "south": "kitchen",
-                'items': ["""rusty sword"""],
+                'items': ["rusty sword"],
                 'dark' : True,
                 'monster': {'Name' : 'Spectral King', 'HP': 10, 'Attack': 6}
                 }
 }
 
 player_HP = 20
-player_attack = 1
 inventory = []
 
-if 'rusty sword' in inventory:
-    player_attack += 5
+
 
 def describe_room(player_position, current_room):
     if not current_room['items']:
@@ -90,7 +88,7 @@ def check_inventory():
                 print("You have no items in your inventory.")
             else:
                 print("Inventory: "+', '.join(inventory))
-                if '''paper_scrap''' in inventory:
+                if "paper scrap" in inventory:
                     print("The paper scrap says 5293")
     
 def drop_item(player_position, current_room):
@@ -109,7 +107,7 @@ def open_chest():
         else:
             print("The lock stays firmly closed.")
             
-def enter_combat(player_HP, current_room, player_attack):
+def enter_combat(player_HP, current_room, player_attack, player_position):
     monster_name = current_room['monster']['Name']
     monster_HP = current_room['monster']['HP']
     monster_attack = current_room['monster']['Attack']
@@ -129,19 +127,33 @@ def enter_combat(player_HP, current_room, player_attack):
             print(f"Your HP: {player_HP}")
             monster_HP -= player_attack
             print(f"{monster_name}'s HP: {monster_HP}")
+        elif choice == "2":
+            print("The monster misses you with it's next attack.")
+        elif choice == "3":
+            return player_HP
+        elif choice == "4":
+            check_inventory()
+        elif choice == "5":
+            print("Goodbye!")
+            break
             
     if player_HP <= 0:
         print("You are defeated. Game over")
+            
     if monster_HP <= 0:
         print('You have defeated the monster!')
         del current_room['monster']
-        if current_room == 'great hall':
+        if player_position == 'great hall':
             current_room['items'].append('key')
+            print("The Spectral King drops a key as it perishes")
             return player_HP
+    return player_HP
         
 def main_menu():
+        global player_HP
         player_position = "hall"
-        while True:
+        while True: 
+            player_attack = 1 + (5 if "rusty sword" in inventory else 0)
             if player_HP <= 0 :
                 print("You are defeated. Game over.")
                 break
@@ -163,7 +175,7 @@ def main_menu():
                 choice = input('Choose an option: ')
                 
                 if choice == "1":
-                   enter_combat(player_HP, current_room, player_attack)
+                   player_HP = enter_combat(player_HP, current_room, player_attack, player_position)
                 elif choice == "2":
                    pick_up_item(current_room)
                 elif choice == "3":
@@ -171,7 +183,7 @@ def main_menu():
                 elif choice == "4":
                    check_inventory()
                 elif choice == "5":
-                    move_player()
+                    player_position = move_player(player_position, current_room)
                 elif choice == '6':
                    print('Goodbye!')
                    break
