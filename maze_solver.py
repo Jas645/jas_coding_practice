@@ -108,7 +108,7 @@ def solve(maze, position, end, visited, path):
     return False
 
 position = (0,0)
-maze = generate_maze(21,21)
+maze = generate_maze(35,35)
 start = (0,0)
 end = (len(maze)-1, len(maze[0])-1)
 path = []
